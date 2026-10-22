@@ -18,18 +18,18 @@ To reproduce this project from a clean clone, open your terminal and run the fol
 
 ## Data findings
 Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_correlations.csv`):
-* **Service Type:** The `[INSERT highest delay rate service type]` service is delayed most often, failing at a rate of `[INSERT delay rate]`.
-* **Hub Tiers:** As we move from Tier 1 to Tier 3 hubs, the delay rate severely worsens, jumping from `[INSERT Tier 1 delay rate]` in Tier 1 to `[INSERT Tier 3 delay rate]` in Tier 3.
-* **Distance:** Delays scale drastically with distance. Parcels traveling 0-200km have a delay rate of only `[INSERT 0-200 rate]`, while those traveling 601+ km fail `[INSERT 601+ rate]` of the time.
+* **Service Type:** The `Express` service is delayed most often, failing at a rate of `0.4897`.
+* **Hub Tiers:** As we move from Tier 1 to Tier 3 hubs, the delay rate severely worsens, jumping from `0.04` in Tier 1 to `0.44` in Tier 3.
+* **Distance:** Delays scale drastically with distance. Parcels traveling 0-200km have a delay rate of only `0.0219`, while those traveling 601+ km fail `0.8523` of the time.
 * **Correlations:** The three variables most strongly correlated with actual delivery hours are:
-  1. `promised_hours`: `[INSERT correlation value]`
-  2. `distance_km`: `[INSERT correlation value]`
-  3. `n_stops`: `[INSERT correlation value]`
-* **Log Transformation:** The `declared_value_inr` was log-transformed because the data is highly right-skewed. Before the transform, the mean (`[INSERT declared_value_mean_inr from part_a_checks]`) was vastly higher than the median (`[INSERT declared_value_median_inr]`), indicating massive outliers. The log transformation pulls these extremes inward, creating a normal distribution that regression models can actually learn from.
+  1. `promised_hours`: `0.8372`
+  2. `distance_km`: `0.4011`
+  3. `n_stops`: `0.2458`
+* **Log Transformation:** The `declared_value_inr` was log-transformed because the data is highly right-skewed. Before the transform, the mean (`1533.0542`) was vastly higher than the median (`1121.5`), , whereas log_declared_value has a mean of 7.0280 and a median of 7.0220, restoring a normal distribution for linear models.
 
 ## Model results (regression)
-* **Baseline:** The mean baseline achieved an R² of `[INSERT baseline R2 from part_b_metrics]`. Because it is negative, it means a naive average guess is actually worse than predicting a horizontal line; our ML models must beat this to be viable.
-* **Winning Model:** The `[INSERT winning model from part_b_metrics test row]` won the validation phase and achieved a final Test RMSE of `[INSERT test RMSE]` hours.
+* **Baseline:** The mean baseline achieved an R² of `-0.0211`. Because it is negative, it means a naive average guess is actually worse than predicting a horizontal line; our ML models must beat this to be viable.
+* **Winning Model:** The `linear_regression` won the validation phase and achieved a final Test RMSE of `4.5235` hours.
 * **Bias vs. Variance (Tree Depth):** At Depth 1, both training and validation RMSE are extremely high (a gap of only `[INSERT train/val gap for depth 1 from part_b_tree_depth]`), proving High Bias (underfitting). At Unlimited depth, the model memorizes the training data perfectly (Train RMSE = 0) but fails on validation, causing a massive gap of `[INSERT train/val gap for unlimited depth]`, proving High Variance (overfitting).
 * **Learning Rate:** For Gradient Boosting, a rate of 0.1 was optimal. A rate of 0.01 is too slow (the 100 trees can't reach the answer in time), and 1.0 is too aggressive, causing the algorithm to wildly overshoot the mathematical minimum.
 * **Cross-Validation:** *(Check `part_b_cv.csv`. If the #1 model there matches your validation winner, write: "The CV ranking agreed with the validation ranking, proving our model is stable.")* *(If it disagreed, write: "Although X won on the single validation split, Y won in Cross-Validation. I would ship Y, as Cross-Validation tests across 5 different slices of data, proving it generalizes better to unseen data.")*
