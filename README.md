@@ -30,20 +30,20 @@ Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_c
 ## Model results (regression)
 * **Baseline:** The mean baseline achieved an R² of `-0.0211`. Because it is negative, it means a naive average guess is actually worse than predicting a horizontal line; our ML models must beat this to be viable.
 * **Winning Model:** The `linear_regression` won the validation phase and achieved a final Test RMSE of `4.5235` hours.
-* **Bias vs. Variance (Tree Depth):** At Depth 1, both training and validation RMSE are extremely high (a gap of only `[INSERT train/val gap for depth 1 from part_b_tree_depth]`), proving High Bias (underfitting). At Unlimited depth, the model memorizes the training data perfectly (Train RMSE = 0) but fails on validation, causing a massive gap of `[INSERT train/val gap for unlimited depth]`, proving High Variance (overfitting).
+* **Bias vs. Variance (Tree Depth):** At Depth 1, both training and validation RMSE are extremely high (a gap of only `0.499`), proving High Bias (underfitting). At Unlimited depth, the model memorizes the training data perfectly (Train RMSE = 0) but fails on validation, causing a massive gap of `7.8368`, proving High Variance (overfitting).
 * **Learning Rate:** For Gradient Boosting, a rate of 0.1 was optimal. A rate of 0.01 is too slow (the 100 trees can't reach the answer in time), and 1.0 is too aggressive, causing the algorithm to wildly overshoot the mathematical minimum.
-* **Cross-Validation:** *(Check `part_b_cv.csv`. If the #1 model there matches your validation winner, write: "The CV ranking agreed with the validation ranking, proving our model is stable.")* *(If it disagreed, write: "Although X won on the single validation split, Y won in Cross-Validation. I would ship Y, as Cross-Validation tests across 5 different slices of data, proving it generalizes better to unseen data.")*
+* **Cross-Validation:** * "Although linear_regression won on the single validation split, gradient_boosting won in Cross-Validation. I would ship gradient_boosting, as Cross-Validation tests across 5 different slices of data, proving it generalizes better to unseen data."*
 
 ## Model results (classification)
 * **Blind Baseline:** A model that blindly guesses "On-Time" for everything achieves an accuracy of `0.7667` because ~77% of parcels are on time. However, it is entirely useless because its Recall is 0—it catches exactly zero delayed parcels.
-* **Noise Columns:** The 5 noise columns accounted for a combined `[INSERT sum of rf_importance for noise columns from part_c_feature_scores]` share of the forest's importance. Thankfully, SelectKBest properly identified all 5 as having zero signal; they all ranked 8th or lower by F-score.
+* **Noise Columns:** The 5 noise columns accounted for a combined `0.2253` share of the forest's importance. Thankfully, SelectKBest properly identified all 5 as having zero signal; they all ranked 8th or lower by F-score.
 * **SelectK Results:** The `k` table shows that restricting the model to the top 7 features maintains (and often improves) the Validation F1 score, proving that dropping noise prevents the model from hallucinating false patterns.
-* **Tuning:** `[Did the grid/random search beat the default forest in part_c_tuning.csv? Write Yes or No]`. Tuning on a tiny 180-row validation set can sometimes result in overfitting to that specific validation slice rather than finding universally better parameters. 
-* **The Threshold:** To meet the Operations Rule (Recall >= 0.80), the threshold was lowered to `[INSERT threshold from part_c_final_config.csv]`. Lowering the threshold intentionally sacrifices Precision (increasing false alarms) to maximize Recall (catching actual delays). 
-* **Test Performance:** On the final Test set, the model achieved a Precision of `[INSERT test precision]`, a Recall of `[INSERT test recall]`, and an F1 of `[INSERT test F1]`. Comparing this to the validation recall requires honesty: the test set only contains 41 actual delayed parcels, meaning one or two lucky/unlucky guesses heavily swing the percentage.
+* **Tuning:** `No`. Tuning on a tiny 180-row validation set can sometimes result in overfitting to that specific validation slice rather than finding universally better parameters. 
+* **The Threshold:** To meet the Operations Rule (Recall >= 0.80), the threshold was lowered to `0.5`. Lowering the threshold intentionally sacrifices Precision (increasing false alarms) to maximize Recall (catching actual delays). 
+* **Test Performance:** On the final Test set, the model achieved a Precision of '0.6889' a Recall of `0.7561`, and an F1 of `0.7209`. Comparing this to the validation recall requires honesty: the test set only contains 41 actual delayed parcels, meaning one or two lucky/unlucky guesses heavily swing the percentage.
 
 ## Operations recommendation
-* **The Escalate Segment:** Hubs in the Escalate segment (`[INSERT Escalate hubs from segment_profile.csv]`) suffer from a severe average delay rate of `[INSERT Escalate delay rate]`. 
+* **The Escalate Segment:** Hubs in the Escalate segment (`9`) suffer from a severe average delay rate of `0.46`. 
 * **Misleading Tier Labels:** Operations cannot blindly trust the Tier labels. According to our mismatch data:
   * `[List the 4 hubs from tier_vs_segment_mismatch.csv, e.g., HUB07 is labeled Tier 1, but actually performs at a 'Watch' level.]`
   * Planners must use our data-driven Segments (Standard/Watch/Escalate) instead of Tiers for playbook assignment.
