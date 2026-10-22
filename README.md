@@ -45,7 +45,7 @@ Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_c
 ## Operations recommendation
 * **The Escalate Segment:** Hubs in the Escalate segment (`9`) suffer from a severe average delay rate of `0.46`. 
 * **Misleading Tier Labels:** Operations cannot blindly trust the Tier labels. According to our mismatch data:
-  * `[List the 4 hubs from tier_vs_segment_mismatch.csv, e.g., HUB07 is labeled Tier 1, but actually performs at a 'Watch' level.]`
+  * '`
   * Planners must use our data-driven Segments (Standard/Watch/Escalate) instead of Tiers for playbook assignment.
 * **Alert System Impact:** Using our threshold of `[INSERT threshold]`, for every 10 parcels flagged, `[INSERT (Precision * 10) rounded to 1 decimal]` are truly delayed. For every 10 actual delayed parcels, our system successfully catches `[INSERT (Recall * 10) rounded to 1 decimal]`. 
 * **Live Action List:** Out of the 48 new parcels scored today, `[Open outputs/new_shipment_actions.csv and count how many rows have flagged = 1]` were flagged for intervention. Of those, `[Count how many rows say "Escalate to hub manager"]` require direct hub-manager escalation.
