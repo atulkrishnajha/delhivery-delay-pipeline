@@ -31,7 +31,7 @@ Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_c
 * **Baseline:** The mean baseline achieved an R² of `-0.0211`. Because it is negative, it means a naive average guess is actually worse than predicting a horizontal line; our ML models must beat this to be viable.
 * **Winning Model:** The `linear_regression` won the validation phase and achieved a final Test RMSE of `4.5235` hours.
 * **Bias vs. Variance (Tree Depth):** At Depth 1, both training and validation RMSE are extremely high (a gap of only `0.499`), proving High Bias (underfitting). At Unlimited depth, the model memorizes the training data perfectly (Train RMSE = 0) but fails on validation, causing a massive gap of `7.8368`, proving High Variance (overfitting).
-* **Learning Rate:** For Gradient Boosting, a rate of 0.1 was optimal. A rate of 0.01 is too slow (the 100 trees can't reach the answer in time), and 1.0 is too aggressive, causing the algorithm to wildly overshoot the mathematical minimum.
+* **Learning Rate:** For Gradient Boosting, a rate of 0.1 was optimal. A rate of 0.01 is too slow , and 1.0 is too aggressive, causing the algorithm to wildly overshoot the mathematical minimum.
 * **Cross-Validation:** * "Although linear_regression won on the single validation split, gradient_boosting won in Cross-Validation. I would ship gradient_boosting, as Cross-Validation tests across 5 different slices of data, proving it generalizes better to unseen data."*
 
 ## Model results (classification)
@@ -44,18 +44,18 @@ Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_c
 
 ## Operations recommendation
 * **The Escalate Segment:** Hubs in the Escalate segment (`9`) suffer from a severe average delay rate of `0.46`. 
-* **Misleading Tier Labels:** Operations cannot blindly trust the Tier labels. According to our mismatch data:
+* **Misleading Tier Labels:** Operations cannot blindly trust the Tier labels. According to our mismatch data:Four hubs are behaving radically differently from their corporate tier assignments: HUB07 Kolkata (Tier 1 operating at Watch levels), HUB13 Nagpur (Tier 2 at Escalate levels), HUB15 Kochi (Tier 2 at Escalate levels), and HUB22 Dehradun (Tier 3 operating  at Watch levels). Their operational playbooks should match their Segment, not their Tier.
   * '`
   * Planners must use our data-driven Segments (Standard/Watch/Escalate) instead of Tiers for playbook assignment.
-* **Alert System Impact:** Using our threshold of `[INSERT threshold]`, for every 10 parcels flagged, `[INSERT (Precision * 10) rounded to 1 decimal]` are truly delayed. For every 10 actual delayed parcels, our system successfully catches `[INSERT (Recall * 10) rounded to 1 decimal]`. 
-* **Live Action List:** Out of the 48 new parcels scored today, `[Open outputs/new_shipment_actions.csv and count how many rows have flagged = 1]` were flagged for intervention. Of those, `[Count how many rows say "Escalate to hub manager"]` require direct hub-manager escalation.
+* **Alert System Impact:** Using our threshold of `0.5`, for every 10 parcels flagged, `6.9 rounded to 1 decimal]` are truly delayed. For every 10 actual delayed parcels, our system successfully catches `7.6 rounded to 1 decimal`. 
+* **Live Action List:** Out of the 48 new parcels scored today, 14 were flagged for intervention. Of those, 7 require direct hub-manager escalation.
 * **Why K=3?** Although the Across-to-Within separation ratio continues rising for K=4 and K=5, we kept K=3. Clustering into 4 or 5 creates micro-clusters containing fewer than 6 hubs. A grouping that small cannot viably support its own dedicated regional operational playbook. 
 
 ## Production plan
 * **Production-Readiness Mappings:**
   1. *Consistency:* Achieved by keeping all cleaning and feature engineering inside `src/shipment_prep.py`, which is shared identically by both the training and prediction scripts.
   2. *Reproducibility:* Guaranteed by pinning exact versions in `requirements.txt` and hardcoding `random_state=42` across all splits and algorithms.
-  3. *Maintainability:* Code is broken into modular scripts (`part_a`, `part_b`, etc.) rather than one giant spaghetti file.
+  3. *Maintainability:* Code is broken into modular scripts (`part_a`, `part_b`, etc.) rather than one giant  file.
   4. *Reliability:* `package_model.py` saves fallback median values so the live scoring script doesn't crash if a scale goes offline and returns a missing weight.
   5. *Monitorability:* The `part_d_reload_check.csv` automatically verifies that the saved model behaves identically to the trained model before deployment.
 * **Monitoring Triggers:**
@@ -65,6 +65,6 @@ Based on the historical data analysis (`part_a_delay_by_group.csv` and `part_a_c
 * **Retraining & Data Drift:** The model should be retrained quarterly. The September `sale_event_flag` cannot be compared to normal weeks; it must only be benchmarked against similar peak events (e.g., Diwali sales). Data drift would appear as gradual shifts in inputs, such as the median distance increasing as the company expands to rural areas, causing our scaler to become outdated.
 
 ## Limitations
-1. **Synthetic Data:** The model is trained on synthetic data generator outputs. Real-world logistics data contains much messier edge cases (e.g., destroyed barcodes, vehicle breakdowns).
+1. **Synthetic Data:** The model is trained on synthetic data generator outputs. Real-world logistics data contains much messier edge cases .
 2. **Small Test Set:** The test set for classification only contained 41 delayed parcels. A test set this small means a change of just 2-3 parcels creates a massive swing in Recall metrics.
 3. **Threshold Tuning:** The threshold was tuned on a single 180-row validation split. A robust production system would tune the threshold using Cross-Validation to ensure it holds up against data variance.
