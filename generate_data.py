@@ -1,5 +1,5 @@
 """Synthetic shipment data for the Delay Intelligence capstone.
-Run once:  python generate_data.py   (writes data/hubs.csv, data/raw_shipments.csv, data/new_shipments.csv)
+Run once:  python3 generate_data.py   (writes data/hubs.csv, data/raw_shipments.csv, data/new_shipments.csv)
 Do not edit any constant: every number in the brief was measured on this exact output."""
 import os
 import numpy as np
